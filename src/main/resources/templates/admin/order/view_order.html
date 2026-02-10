@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order Management - Wearify Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="head mt-3">
+            <h1>Order Management</h1>
+            <a th:href="@{/admin}" class="btn btn-secondary mb-3">Back to Dashboard</a>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>User</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                            <th>Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td th:text="${order.id}"></td>
+                            <td th:text="${order.user != null ? order.user.name : 'N/A'}"></td>
+                            <td th:text="${order.product != null ? order.product.name : 'N/A'}"></td>
+                            <td th:text="${order.quantity}"></td>
+                            <td>₹<span th:text="${order.totalPrice}"></span></td>
+                            <td th:text="${#temporals.format(order.orderDate, 'dd-MMM-yyyy HH:mm')}"></td>
+                            <td>
+                                <span th:text="${order.status}"
+                                    th:classappend="${order.status == 'DELIVERED' ? 'badge bg-success' : 
+                                             order.status == 'CANCELLED' ? 'badge bg-danger' : 
+                                             order.status == 'SHIPPED' ? 'badge bg-info' : 
+                                             order.status == 'CONFIRMED' ? 'badge bg-primary' : 'badge bg-warning'}"></span>
+                            </td>
+                            <td
+                                th:text="${order.address != null ? order.address.city + ', ' + order.address.state : 'N/A'}">
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/orders/update/{id}(id=${order.id})}"
+                                    class="btn btn-warning btn-sm">Update Status</a>
+                                <a th:href="@{/admin/orders/delete/{id}(id=${order.id})}" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Are you sure you want to delete this order?')">Delete</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(orders)}">
+                            <td colspan="9" class="text-center">No orders found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

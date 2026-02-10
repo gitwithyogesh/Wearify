@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Wearify</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 100px auto 50px;
+            padding: 2rem;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .admin-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .admin-nav-btn {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .admin-nav-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .admin-nav-btn svg {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 1rem;
+            stroke: #667eea;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+                    <h1>Wearify Admin</h1>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <a href="/" class="btn btn-secondary">Back to Store</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <p>Manage your Wearify store from one place</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Products</h3>
+                <div class="stat-value" th:text="${totalProducts}">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                <div class="stat-value" th:text="${totalOrders}">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="stat-value" th:text="${totalUsers}">0</div>
+            </div>
+        </div>
+
+        <div class="admin-nav">
+            <a href="/admin/products" class="admin-nav-btn">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <h3>Manage Products</h3>
+            </a>
+            <a href="/admin/orders" class="admin-nav-btn">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path
+                        d="M9 2L7.17 6M15 2l1.83 4M3.34 6h17.32a1 1 0 01.98 1.2l-1.83 10a2 2 0 01-1.97 1.8H6.16a2 2 0 01-1.97-1.8l-1.83-10A1 1 0 013.34 6z" />
+                </svg>
+                <h3>Manage Orders</h3>
+            </a>
+            <a href="/admin/users" class="admin-nav-btn">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75" />
+                </svg>
+                <h3>Manage Users</h3>
+            </a>
+            <a href="/api/products" target="_blank" class="admin-nav-btn">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <h3>View API</h3>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

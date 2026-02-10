@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Product Management - Wearify Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="head mt-3">
+            <h1>Product Management</h1>
+            <a th:href="@{/admin/products/add}" class="btn btn-primary mb-3">Add New Product</a>
+            <a th:href="@{/admin}" class="btn btn-secondary mb-3 ms-2">Back to Dashboard</a>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Brand</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Image</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="product : ${products}">
+                            <td th:text="${product.id}"></td>
+                            <td th:text="${product.name}"></td>
+                            <td th:text="${product.category}"></td>
+                            <td th:text="${product.brand}"></td>
+                            <td>₹<span th:text="${product.price}"></span></td>
+                            <td th:text="${product.stock}"></td>
+
+                            <td>
+                                <div th:if="${product.imageUrl != null}">
+                                    <img th:src="${product.imageUrl}" alt="product" width="70" height="70"
+                                        style="object-fit: cover;">
+                                </div>
+                                <div th:if="${product.imageUrl == null}">No Image</div>
+                            </td>
+
+                            <td>
+                                <a th:href="@{/admin/products/update/{id}(id=${product.id})}"
+                                    class="btn btn-warning btn-sm">Edit</a>
+                                <a th:href="@{/admin/products/delete/{id}(id=${product.id})}"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

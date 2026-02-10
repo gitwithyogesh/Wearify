@@ -1,125 +1,7 @@
 // ========================================
-// Product Data
+// Product Data - Loaded from API
 // ========================================
-const products = [
-    {
-        id: 1,
-        name: "Classic Denim Jacket",
-        category: "mens",
-        price: 399.99,
-        originalPrice: 799.99,
-        image: "https://images-static.nykaa.com/media/catalog/product/f/3/f30a4aeIB-DJ-04-3_NavyBlue_2.jpg?tr=w-500",
-        badge: "Sale"
-    },
-    {
-        id: 2,
-        name: "Elegant Evening Dress",
-        category: "womens",
-        price: 1499.99,
-        originalPrice: 2099.99,
-        image: "https://www.newyorkdress.com/cdn/shop/products/Ladivine-J871_silver_2_1200x.jpg?v=1757962020",
-        badge: "New"
-    },
-    {
-        id: 3,
-        name: "Leather Crossbody Bag",
-        category: "accessories",
-        price: 349.99,
-        originalPrice: 899.99,
-        image: "https://m.media-amazon.com/images/I/61War56T+OL._AC_SX522_.jpg",
-        badge: "Sale"
-    },
-    {
-        id: 4,
-        name: "Premium Sneakers",
-        category: "shoes",
-        price: 599.99,
-        originalPrice: 1099.99,
-        image: "https://stylestryproductionwls47sou4z.cdn.e2enetworks.net/images/products/medium/541de81e1fe08b4acae8e6798df5e7080e4c9dae.webp",
-        badge: "Popular"
-    },
-    {
-        id: 5,
-        name: "Casual Cotton Shirt",
-        category: "mens",
-        price: 349.99,
-        originalPrice: 899.99,
-        image: "https://imagescdn.jaypore.com/img/app/product/3/39605494-12242801.jpg?w=500&auto=format",
-        badge: "Sale"
-    },
-    {
-        id: 6,
-        name: "Floral Summer Dress",
-        category: "womens",
-        price: 789.99,
-        originalPrice: 1199.99,
-        image: "https://images.edressit.com/ProductImages/420x633/201909/7967f640-6121-4946-a17b-102444b09f2c.jpg",
-        badge: "New"
-    },
-    {
-        id: 7,
-        name: "Designer Sunglasses",
-        category: "accessories",
-        price: 119.99,
-        originalPrice: 299.99,
-        image: "https://assets.myntassets.com/w_200,q_50,,dpr_3,fl_progressive,f_webp/assets/images/2025/SEPTEMBER/12/rvxO1D7w_d10fe9cb5ddd46fba6882a95dfcd7499.jpg",
-        badge: "Trending"
-    },
-    {
-        id: 8,
-        name: "Oxford Business Shoes",
-        category: "shoes",
-        price: 499.99,
-        originalPrice: 1099.99,
-        image: "https://cdn.shopify.com/s/files/1/0471/9584/8869/files/FST_FOSMF-2091_BLACK-MODEL1_498ca6fa-1561-4c59-b6aa-3fbc3b39570e_255x.jpg?v=1768043723",
-        badge: "Sale"
-    },
-    {
-        id: 9,
-        name: "Wool Blend Coat",
-        category: "mens",
-        price: 999.99,
-        originalPrice: 1799.99,
-        image: "https://assets.myntassets.com/w_200,q_50,,dpr_3,fl_progressive,f_webp/assets/images/2024/NOVEMBER/27/aokKFNeK_554582fb48c240be84619fd34d53b462.jpg",
-        badge: "Premium"
-    },
-    {
-        id: 10,
-        name: "Silk Blouse",
-        category: "womens",
-        price: 469.99,
-        originalPrice: 999.99,
-        image: "https://jusblouses.com/cdn/shop/files/VAI01940-Edit.jpg?v=1724671415&width=1000",
-        badge: "New"
-    },
-    {
-        id: 11,
-        name: "Leather Watch",
-        category: "accessories",
-        price: 649.99,
-        originalPrice: 1749.99,
-        image: "https://www.kanewatches.com/cdn/shop/products/1000x1500-03-gold-club-vintage-brown-kane-watches-pocket_750x.jpg",
-        badge: "Luxury"
-    },
-    {
-        id: 12,
-        name: "Running Shoes",
-        category: "shoes",
-        price: 999.99,
-        originalPrice: 1399.99,
-        image: "https://assets.ajio.com/medias/sys_master/root1/20250902/tIhI/68b6fd853d468c61abb85a79/-473Wx593H-701869973-grey-MODEL.jpg",
-        badge: "Sport"
-    },
-    {
-        id: 13,
-        name: "7-inch High Heel",
-        category: "shoes",
-        price: 799.99,
-        originalPrice: 1099.99,
-        image: "https://img.drz.lazcdn.com/g/kf/Sffa53dffdf5d451e9b75c82400ed801bW.jpg_960x960q80.jpg_.webp",
-        badge: "New"
-    }
-];
+let products = [];
 
 // ========================================
 // State Management
@@ -147,18 +29,77 @@ const navLinks = document.querySelectorAll('.nav-link');
 // ========================================
 // Initialize
 // ========================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Detect if we're on a category page
     const pageCategory = document.body.dataset.category;
     if (pageCategory) {
         currentFilter = pageCategory;
     }
 
+    // Load products from API
+    await loadProductsFromAPI();
+
     renderProducts();
     updateCartUI();
     initEventListeners();
     initScrollEffects();
 });
+
+// ========================================
+// Load Products from API
+// ========================================
+async function loadProductsFromAPI() {
+    try {
+        const response = await fetch('/api/products');
+        if (response.ok) {
+            const apiProducts = await response.json();
+
+            // Map API products to frontend format
+            products = apiProducts.map(p => ({
+                id: p.id,
+                name: p.name,
+                category: p.category.toLowerCase(), // MENS -> mens
+                price: p.price,
+                image: p.imageUrl || '',
+                badge: p.stock > 50 ? 'In Stock' : p.stock > 20 ? 'Limited' : 'Low Stock',
+                description: p.description,
+                brand: p.brand,
+                stock: p.stock
+            }));
+
+            console.log(`✅ Loaded ${products.length} products from API`);
+        } else {
+            console.error('Failed to load products from API');
+            products = getFallbackProducts();
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+        products = getFallbackProducts();
+    }
+}
+
+// Fallback products if API fails
+function getFallbackProducts() {
+    return [
+        {
+            id: 1,
+            name: "Classic Denim Jacket",
+            category: "mens",
+            price: 399.99,
+            image: "https://images-static.nykaa.com/media/catalog/product/f/3/f30a4aeIB-DJ-04-3_NavyBlue_2.jpg?tr=w-500",
+            badge: "Sale"
+        },
+        {
+            id: 2,
+            name: "Elegant Evening Dress",
+            category: "womens",
+            price: 1499.99,
+            image: "https://www.newyorkdress.com/cdn/shop/products/Ladivine-J871_silver_2_1200x.jpg",
+            badge: "New"
+        }
+    ];
+}
+
 
 // ========================================
 // Event Listeners
@@ -342,6 +283,16 @@ function getProductIcon(category) {
 // Cart Functionality
 // ========================================
 function addToCart(productId) {
+    // Check if user is logged in
+    const user = localStorage.getItem('wearify-user');
+    if (!user) {
+        showNotification('🔒 Please login to add items to cart');
+        setTimeout(() => {
+            window.location.href = `/login?return=${encodeURIComponent(window.location.pathname)}`;
+        }, 1500);
+        return;
+    }
+
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
@@ -797,19 +748,88 @@ function initCheckoutPage() {
     if (checkoutTax) checkoutTax.textContent = `₹${tax.toFixed(2)}`;
     if (checkoutTotal) checkoutTotal.textContent = `₹${total.toFixed(2)}`;
 
+
     // Place order button
     if (placeOrderBtn) {
-        placeOrderBtn.addEventListener('click', () => {
-            // Clear cart
-            localStorage.removeItem('wearify-cart');
+        placeOrderBtn.addEventListener('click', async () => {
+            if (cart.length === 0) {
+                showNotification('❌ Your cart is empty!');
+                return;
+            }
 
-            // Show success message
-            showNotification('🎉 Order placed successfully! Thank you for shopping with Wearify!');
+            try {
+                // Change button state
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.textContent = 'Processing...';
 
-            // Redirect to home after 2 seconds
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 2000);
+                // First, create a user (or get existing user ID)
+                // For demo, we'll create a guest user
+                const userResponse = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Guest User',
+                        email: 'guest@wearify.com',
+                        phone: '9999999999'
+                    })
+                });
+
+                let userId;
+                if (userResponse.ok) {
+                    const user = await userResponse.json();
+                    userId = user.id;
+                } else {
+                    // If user already exists, get it by email
+                    const existingUserResponse = await fetch('/api/users/email/guest@wearify.com');
+                    if (existingUserResponse.ok) {
+                        const existingUser = await existingUserResponse.json();
+                        userId = existingUser.id;
+                    } else {
+                        throw new Error('Failed to create/get user');
+                    }
+                }
+
+                // Create orders for each cart item
+                const orderPromises = cart.map(async (item) => {
+                    const orderData = {
+                        userId: userId,
+                        productId: item.id,
+                        quantity: item.quantity,
+                        addressId: 1 // Default address (you can make this dynamic later)
+                    };
+
+                    const response = await fetch(`/api/orders/place?userId=${userId}&productId=${item.id}&quantity=${item.quantity}&addressId=1`, {
+                        method: 'POST'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to create order for ${item.name}`);
+                    }
+
+                    return await response.json();
+                });
+
+                // Wait for all orders to be created
+                await Promise.all(orderPromises);
+
+                // Clear cart from localStorage
+                localStorage.removeItem('wearify-cart');
+                cart = [];
+
+                // Show success message
+                showNotification(`🎉 Order placed successfully! ${cart.length} items ordered. Thank you!`);
+
+                // Redirect to home after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Order placement error:', error);
+                showNotification('❌ Failed to place order. Please try again.');
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.textContent = 'Place Order';
+            }
         });
     }
 }
